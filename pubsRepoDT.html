@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title id='Description'>Filtered Geol Maps</title>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html;" charset="utf-8" />
+	
+<style>
+.myModal {
+  /* Default to hidden */
+  display: none;
+
+  position: fixed;
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 100%;
+  /*height: 400px;*/
+  max-height: 100%;
+  border-radius: 3px;
+  box-sizing: border-box;
+  
+  /* A bit of padding around image */
+  padding: 1.5rem;
+
+  /* Translucent background */
+  background: rgba(255, 255, 255, 0.99);
+  box-shadow: 0 0 27px 10px rgba(0, 0, 0, 0.1);
+}
+#fullScreen {
+  /* Default to hidden */
+  display: none;
+
+  position: fixed;
+  z-index: 998;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.myModal #downloadLink {
+	/*display: inline-block;*/
+}
+
+#modalText hr:last-child {
+	display: none;
+}
+
+.myModal hr {
+	margin-top: 28px;
+	margin-bottom: 8px;
+	border: solid;
+	border-width: thin;
+}
+
+#modalText {
+	padding: 15px;
+	padding-top: 40px;
+}
+
+#modalTitle {
+    font-size: 1.25rem;
+	float: left;
+}
+.Close {
+  color: #000000;
+    float: right;
+    font-size: 2.5rem !important;
+    margin: -9px -10px 0 0;
+}
+
+.Close:hover, .Close:focus {
+  color: #aaaaaa !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+#modalText hr {
+	margin-top: 8px !important;
+	margin-bottom: 8px;
+	border: none;
+	height: .5px;
+	/* Set the hr color */
+	color: #dac8c8; /* old IE */
+	background-color: #dac8c8; /* Modern Browsers */
+}
+
+#modalText #leftAlign{
+  /* Full width and height */
+  float: left;
+}
+
+#modalText #rightAlign{
+  /* Full width and height */
+  float: right;
+}
+
+
+.avia_code_block_1 {
+    margin-top: -50px
+}
+th.dt-head-center {
+    vertical-align: middle;
+}	
+th.dt-center {
+    vertical-align: middle;
+}
+td.dt-center a {
+    vertical-align: middle;
+}
+td.dt-head-center a {
+    vertical-align: middle;
+}
+.button {
+		color: #ffffff;
+		border-color: #a1300d;
+		background-color: #c3512f;
+		padding: 9px 10px 7px;
+		font-size: 13px;
+		min-width: 80px;
+		border-radius: 3px;
+		text-decoration: none;
+		display: inline-block;
+		border-bottom-style: solid;
+		border-bottom-width: 1px;
+		margin: 3px 0;
+		line-height: 1.2em;
+		top: 57px;
+		z-index: 1;
+		position: relative;
+		font-weight: normal;
+		text-align: center;
+		max-width: 100%;
+		border: 0;
+		font: inherit;
+		vertical-align: baseline;
+		box-sizing: border-box;
+		cursor: pointer;
+	}
+	
+@media only screen and (max-width: 600px) {
+  .button {
+    top: 2px;
+  }
+  #seventyfive {
+    margin: 53px 0 0 0;
+  }
+
+}
+	</style>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/autofill/2.3.5/css/autoFill.dataTables.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/colreorder/1.5.2/css/colReorder.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.3.1/css/fixedColumns.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.1.7/css/fixedHeader.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/keytable/2.5.3/css/keyTable.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.6/css/responsive.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.2.7/css/rowReorder.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/scroller/2.0.3/css/scroller.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchbuilder/1.0.0/css/searchBuilder.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/1.2.0/css/searchPanes.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css"/>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script> 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script> -->
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/autofill/2.3.5/js/dataTables.autoFill.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.colVis.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.print.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/colreorder/1.5.2/js/dataTables.colReorder.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.1/js/dataTables.fixedColumns.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.7/js/dataTables.fixedHeader.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/keytable/2.5.3/js/dataTables.keyTable.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/scroller/2.0.3/js/dataTables.scroller.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/searchbuilder/1.0.0/js/dataTables.searchBuilder.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/searchpanes/1.2.0/js/dataTables.searchPanes.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+	
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://geology.utah.gov/apps/publications/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
+<script type="text/javascript" src="https://geology.utah.gov/apps/publications/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>   
+      
+
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var table = $('#example').DataTable( {
+				ajax: {
+					url: "pubsRepoDT.php", //needs apps/publications/ added when put into WordPress
+					dataSrc: ""
+				},
+			    columns: [
+					{ data: "pub_year" },
+					{ data: "pub_name" },
+					{ data: "pub_author" },
+					{ data: "series_id" },
+					{ data: "pdf_link4AlphList" },
+					{ data: "gis_link" },
+					{ data: "buy_link4AlphList" },
+					{ data: "pub_scale" },
+					{ data: "keywords"}
+				],
+				order: [],
+				columnDefs: [
+					{
+						targets: [1, 4, 6],
+						searchable: false,
+					},
+					{
+						targets: 8,
+						searchable: true,
+						visible: false
+					},
+					{
+						targets: [2, 3, 4, 5, 6],
+						className: 'dt-center'
+					},
+					{
+						targets: [0, 1],
+						className: 'dt-head-center'
+					},
+					{
+						targets: [3, 4, 5, 6],
+						width: '60px'
+					},
+					{
+						targets: [2],
+						width: '75px'
+					},
+					{
+						targets: [0],
+						width: '75px'
+					},
+					{
+						targets: [1],
+						width: '150px'
+					}
+				],
+				/*dom: 'Bfrtip',
+				buttons: [
+					{
+						extend: 'print',
+						text: 'Print current page',
+						autoPrint: false
+					}
+				],*/
+				fixedHeader: true,
+				paging: true,
+				orderCellsTop: true,
+				scrollY: 500,
+				scrollCollapse: true,
+				scrollX: true/*,
+				stateSave: true
+				scroller: true,
+				scrollY: 400,
+				scrollX: true*/
+			});
+			console.log(table);
+			/*$('input[type="search"]').on("keyup", function() {
+				var value = $(this).val().toLowerCase();
+				table.column(0).search(value).column(2).search(value).draw();
+			})*/
+			
+			$('#closeModal').click(function()  {
+				$("#myModal").css("display","none");
+				//$("*").css("filter","none");
+				//$("*").css("filter","none");
+			})
+			$('#closeModal').click(function()  {
+				$("#myModal").css("display","none");
+				$("#fullScreen").css("display","none");
+				//$("*").css("filter","none");
+				//$("*").css("filter","none");
+			})
+			$('#fullScreen').click(function()  {
+				$("#myModal").css("display","none");
+				$("#fullScreen").css("display","none");
+				//$("*").css("filter","none");
+				//$("*").css("filter","none");
+			})
+			/*$("#example").on("click", "#clickMe", function(){
+				$("#myModal").css("display","block");
+				$("body > *:not(body > #myModal)").css("filter","blur(5px)");
+			})*/
+			$("#example").on("click", "#clickMe", function(){
+				$("#myModal").css("display","block");
+				$("#modalTitle").html("<strong>Publication Downloads</strong>");
+				$("#fullScreen").css("display","block");
+				//$("body > *").not("body > #myModal").css("filter","blur(5px)");
+			})
+			
+			//things to search "keyword "geoindex" and then each layer has "7.5", "intermediate", "1x2", "irregular""
+			$('#seventyfive').click(function()  {
+				table.column(7).search('').draw();
+				table.column(5).search('').draw();
+				table.column(7).search('24k').draw();
+			})
+			$('#thirtysixty').click(function()  {
+				table.column(7).search('').draw();
+				table.column(5).search('').draw();
+				table.column(7).search('intermediate').draw();
+			})
+			$('#onebytwo').click(function()  {
+				table.column(7).search('').draw();
+				table.column(5).search('').draw();
+				table.column(7).search('1x2').draw();
+			})
+			$('#irreg').click(function()  {
+				table.column(7).search('').draw();
+				table.column(5).search('').draw();
+				table.column(7).search('irregular').draw();
+			})
+			$('#clear').click(function()  {
+				table.column(7).search('').draw();
+				table.column(5).search('').draw();
+			})
+			$('#gisRaster').click(function()  {
+				table.column(7).search('').draw();
+				table.column(5).search('').draw();
+				table.column(5).search('helloRaster').draw();
+			})
+			$('#gisVector').click(function()  {
+				table.column(7).search('').draw();
+				table.column(5).search('').draw();
+				table.column(5).search('helloVector').draw();
+			})
+		});
+	</script>
+
+
+</head>
+
+<body class='default'>
+<!-- <button id="seventyfive" class="button">7.5' Quads</button>
+<button id="thirtysixty" class="button">Intermediate Scale</button>
+<button id="onebytwo" class="button">1x2 Quads</button>
+<button id="irreg" class="button">Other Maps</button>
+<button id="gisVector" class="button">Vector GIS Available</button>
+<button id="gisRaster" class="button">Raster GIS Available</button>
+<button id="clear" class="button">Clear Filter</button> -->
+
+	<table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Author(s)</th>
+				<th>Series #</th>				
+                <th>Preview Publication</th>
+				<th>Publication Downloads</th>
+                <th>Purchase</th>
+                <th>Map Scale</th>
+				<th>Keywords</th>
+			</tr>
+        </thead>
+    </table>	
+	
+	<div id="fullScreen"></div>
+	<div id="myModal" class="myModal">
+		
+		<div id="modalHeader">
+			<span id="modalTitle"><strong></strong></span>
+			<span id="closeModal" class="Close"><strong>×</strong></span>
+		</div>
+		
+		<div id="modalText"></div>
+	</div>
+</html>
