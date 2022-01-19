@@ -30,6 +30,12 @@
   background: rgba(255, 255, 255, 0.99);
   box-shadow: 0 0 27px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* this is to fix the dang accordions in the "About UGS Publication Series" section that wasn't blurring with the modal window open */
+div .flex_column {
+    z-index: auto;
+}
+
 #fullScreen {
   /* Default to hidden */
   display: none;
@@ -54,9 +60,9 @@ thead input {
         width: 100%;
 }
 
-#modalText hr:last-child {
+/*#modalText hr:last-child {
 	display: none;
-}
+}*/
 
 .myModal hr {
 	margin-top: 28px;
@@ -107,6 +113,16 @@ thead input {
   float: right;
 }
 
+#modalText #modalPubDeets{
+  /* Full width and height */
+  text-align: center;
+  font-weight: bold;
+}
+
+#modalText #modalFooter{
+  /* Full width and height */
+  text-align: center;
+}
 
 .avia_code_block_1 {
     margin-top: -50px
@@ -132,7 +148,7 @@ tr.filters {
     background-color: #fcfcfc !important;
 }
 
-input[type="text"] {
+.filters input[type="text"] {
 	margin-bottom: 0 !important
 }
 
@@ -162,6 +178,10 @@ input[type="text"] {
 		box-sizing: border-box;
 		cursor: pointer;
 	}
+
+.button.clicked {
+	background-color: #007cba !important;
+}
 	
 @media only screen and (max-width: 600px) {
   .button {
@@ -234,12 +254,12 @@ input[type="text"] {
 					dataSrc: ""
 				},
 				columns: [
-					{ data: "pub_year" },
+					{ data: "pub_year" }, 
 					{ data: "pub_name" },
 					{ data: "pub_author" },
 					{ data: "series_id" },
-					{ data: "pdf_link4AlphList" },
-					{ data: "gis_link" },
+					//{ data: "pdf_link4AlphList" },
+					{ data: "linksInPopup" },
 					{ data: "buy_link4AlphList" },
 					{ data: "pub_scale" },
 					{ data: "keywords"} //only here for searching, hidden in columnDefs
@@ -259,6 +279,12 @@ input[type="text"] {
 							);
 							var title = $(cell).text();
 							$(cell).html('<input type="text">');
+
+							$('.filters th').eq($(api.column(colIdx).header()).index()).on('search', function() {
+								$('.filters th').eq($(api.column(colIdx).header()).index()).val('');
+								$('.filters th').eq($(api.column(colIdx).header()).index()).keyup();
+								console.log('fired');
+							});
 		
 							// On every keypress in this input
 							$(
@@ -294,42 +320,43 @@ input[type="text"] {
 				},
 				columnDefs: [
 					{
-						targets: [1, 4, 6],
+						//targets: [1, 4, 6],
+						targets: [5],
 						searchable: false,
 					},
 					{
-						targets: 8,
+						//targets: 8,
+						targets: 7,
 						searchable: true,
 						visible: false
 					},
 					{
+						//targets: [0, 3, 4, 5, 6],
 						targets: [0, 3, 4, 5, 6],
 						className: 'dt-body-center'
 					},
 					{
-						targets: [1, 2, 7],
+						//targets: [1, 2, 7],
+						targets: [1, 2],
 						className: 'dt-body-left'
 					},
 					{
-						targets: [0, 1, 2, 3, 4, 5, 6, 7],
+						//targets: [0, 1, 2, 3, 4, 5, 6, 7],
+						targets: [0, 1, 2, 3, 4, 5, 6],
 						className: 'dt-head-center'
 					},
 					{
-						targets: [3, 4, 5, 6],
-						width: '60px'
+						targets: [1],
+						width: '250px'
 					},
 					{
 						targets: [2],
-						width: '75px'
+						width: '200px'
 					},
 					{
-						targets: [0],
-						width: '75px'
-					},
-					{
-						targets: [1],
-						width: '150px'
-					}
+						targets: [0, 3, 4, 5, 6],
+						width: '60px'
+					}					
 				],
 				/*dom: 'Bfrtip',
 				buttons: [
@@ -344,7 +371,7 @@ input[type="text"] {
 				lengthChange: false,
 				pageLength: 250,
 				orderCellsTop: true,
-				scrollY: 500,
+				scrollY: 690,
 				scrollCollapse: true,
 				scrollX: true/*,
 				stateSave: true
@@ -381,45 +408,87 @@ input[type="text"] {
 			})*/
 			$("#example").on("click", "#clickMe", function(){
 				$("#myModal").css("display","block");
-				$("#modalTitle").html("<strong>Publication Downloads</strong>");
+				$("#modalTitle").html("<strong>Publication & Data</strong>");
 				$("#fullScreen").css("display","block");
 				//$("body > *").not("body > #myModal").css("filter","blur(5px)");
 			})
 			
 			//things to search "keyword "geoindex" and then each layer has "7.5", "intermediate", "1x2", "irregular""
-			$('#seventyfive').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(7).search('24k').draw();
+			$('#geolMap').click(function()  {
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(7).search('').draw();
+					table.column(4).search('').draw();
+					table.column(7).search('geoindex').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(7).search('').draw();
+				}
 			})
-			$('#thirtysixty').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(7).search('intermediate').draw();
+			$('#energyMineral').click(function()  {
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {		
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();			
+					table.column(7).search('').draw();
+					table.column(4).search('').draw();
+					table.column(7).search('emppub').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(7).search('').draw();
+					
+				}
 			})
-			$('#onebytwo').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(7).search('1x2').draw();
+			$('#groundwaterWetlands').click(function()  {
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(7).search('').draw();
+					table.column(4).search('').draw();
+					table.column(7).search('gwp').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(7).search('').draw();
+				}
 			})
-			$('#irreg').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(7).search('irregular').draw();
+			$('#geolHaz').click(function()  {
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(7).search('').draw();
+					table.column(4).search('').draw();
+					table.column(7).search('geohaz').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(7).search('').draw();
+				}
 			})
 			$('#clear').click(function()  {
+				$('.button').removeClass("clicked");
 				table.column(7).search('').draw();
-				table.column(5).search('').draw();
+				table.column(4).search('').draw();
+				$('input[type="text"]').val('');
+				$('input[type="text"]').keyup();
 			})
 			$('#gisRaster').click(function()  {
+				$(this).toggleClass("clicked");
 				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(5).search('helloRaster').draw();
+				table.column(4).search('').draw();
+				table.column(4).search('helloRaster').draw();
 			})
 			$('#gisVector').click(function()  {
+				$(this).toggleClass("clicked");
 				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(5).search('helloVector').draw();
+				table.column(4).search('').draw();
+				table.column(4).search('helloVector').draw();
 			})
 		});
 	</script>
@@ -428,13 +497,12 @@ input[type="text"] {
 </head>
 
 <body class='default'>
-<!-- <button id="seventyfive" class="button">7.5' Quads</button>
-<button id="thirtysixty" class="button">Intermediate Scale</button>
-<button id="onebytwo" class="button">1x2 Quads</button>
-<button id="irreg" class="button">Other Maps</button>
-<button id="gisVector" class="button">Vector GIS Available</button>
-<button id="gisRaster" class="button">Raster GIS Available</button>
-<button id="clear" class="button">Clear Filter</button> -->
+<button id="geolMap" class="button">Geologic Map</button>
+<button id="energyMineral" class="button">Energy & Minerals</button>
+<button id="groundwaterWetlands" class="button">Groundwater & Wetlands</button>
+<button id="geolHaz" class="button">Hazards</button>
+<!-- <button id="gisRaster" class="button">Raster GIS Available</button> -->
+<button id="clear" class="button">Clear Filter</button>
 
 	<table id="example" class="display compact" style="width:100%">
         <thead>
@@ -443,8 +511,8 @@ input[type="text"] {
                 <th>Title</th>
                 <th>Author(s)</th>
 				<th>Series #</th>				
-                <th>Preview Publication</th>
-				<th>Publication Downloads</th>
+                <!-- <th>Preview Publication</th> -->
+				<th>Publication & Data</th>
                 <th>Purchase</th>
                 <th>Map Scale</th>
 				<th>Keywords</th>

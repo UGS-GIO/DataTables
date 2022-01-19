@@ -66,11 +66,33 @@ while ($result->fetch()){
 	$popupLink = "";		//clear the variable for each iteration
 	$popupContent = "";
 	
+	//create link to publication for the top of the modal window
 	if ( empty($PubURL) ||  is_null($PubURL) || $PubURL === null || $PubURL === 'undefined' || $PubURL === ' ' ) { 
 		$popupContent = "";
 	} else {
-		$popupContent = "<a href=\\\"".$PubURL."\\\" target=\\\"_blank\\\"><img src=\\\"https://geology.utah.gov/docs/images/pdf16x16.gif\\\"></a>";
+		$popupContent = "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"".$PubURL."\\\" target=\\\"_blank\\\">Publication</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/down-arrow.png\\\" width=\\\"16px\\\"></a></div></div><br><hr>";
+		
+		$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
 	}
+
+	//add Vector Service or Image Service preview map url if any
+	if ($ServiceName == '30x60_Quads' || $ServiceName == 'Other_Quads' || $ServiceName == 'FigureMaps') {
+		$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://geology.utah.gov/apps/intgeomap/index.html?sid=".$SeriesID."&layers=100k\\\" target=\\\"_blank\\\">Interactive Map</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/map.png\\\" width=\\\"16\\\"></a></div></div><br><hr>";
+		//$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://geology.utah.gov/apps/intgeomap/index.html?scale=318407&lat=".$Latitude."&lng=".$Longitude."&layers=100k%2Cfootprints&elev=171931\\\" target=\\\"_blank\\\">Interactive Map</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/map.png\\\" width=\\\"16\\\"></a></div></div><br><hr>";
+	} else if ($ServiceName == '7_5_Quads' || $ServiceName == 'MD_24K') {
+		$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://geology.utah.gov/apps/intgeomap/index.html?sid=".$SeriesID."&layers=24k\\\" target=\\\"_blank\\\">Interactive Map</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/map.png\\\" width=\\\"16\\\"></a></div></div><br><hr>";
+		//$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://geology.utah.gov/apps/intgeomap/index.html?scale=76660&lat=".$Latitude."&lng=".$Longitude."&layers=24k%2Cfootprints&elev=38144\\\" target=\\\"_blank\\\">Interactive Map</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/map.png\\\" width=\\\"16\\\"></a></div></div><br><hr>";
+	} else if ($ServiceName == '500k_Statewide') {
+		$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://geology.utah.gov/apps/intgeomap/index.html?sid=".$SeriesID."&layers=500k\\\" target=\\\"_blank\\\">Interactive Map</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/map.png\\\" width=\\\"16\\\"></a></div></div><br><hr>";
+		//$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://geology.utah.gov/apps/intgeomap/index.html?scale=1805815&lat=".$Latitude."&lng=".$Longitude."&layers=500k%2Cfootprints&elev=1000000\\\" target=\\\"_blank\\\">Interactive Map</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/map.png\\\" width=\\\"16\\\"></a></div></div><br><hr>";
+	} /*else if ($ServiceName == 'MD_24K' && $PopupFeatureLayer != null){
+		$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://geology.utah.gov/apps/publications/map.html?servName=".$ServiceName."&mobLat=".$Latitude."&popupFL=".$PopupFeatureLayer."&lat=".$CameraOffset."&long=".$Longitude."&seriesID=".$SeriesID."&xsection=".$xsection."&lithcolumn=".$lithcolumn."\\\" target=\\\"_blank\\\">Interactive Map</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/map.png\\\" width=\\\"16\\\"></a></div></div><br><hr>";
+	} else if ($ServiceName == 'MD_24K'){
+		$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://geology.utah.gov/apps/publications/map.html?servName=".$ServiceName."&mobLat=".$Latitude."&lat=".$CameraOffset."&long=".$Longitude."&seriesID=".$SeriesID."\\\" target=\\\"_blank\\\"></div>Interactive Map<div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/map.png\\\" width=\\\"16\\\"></a></div></div><br><hr>";
+	}*/ else {
+		//$PreviewMapURL = "<something></something>";
+		$popupContent .= "";
+	};
 
 	// array_search ( variable $needle , array $haystack )  //search for one variable/needle in another/haystack & returns the first key or true
 	// array_column($array, 'column_key')   // Return the values from a single column in the input array
@@ -86,7 +108,7 @@ while ($result->fetch()){
 		//print_r($array);
 		//print "</pre>"; 
 
-		$popupLink = ""; 
+		//$popupLink = ""; 
 		$mapType = "";
 		// $array is all records in the attachedData table that match with the SeriesID of the current loop iteration
 		foreach($array as $key => $value) {
@@ -147,16 +169,26 @@ while ($result->fetch()){
 		//print "</pre>";
 	}  //end if
 
+	//create link to publication for the top of the modal window
+	if ( empty($PubURL) ||  is_null($PubURL) || $PubURL === null || $PubURL === 'undefined' || $PubURL === ' ' ) { 
+		$popupContent = "";
+	} else {
+		$popupContent .= "<br><div id=\\\"downloadLink\\\"><div id=\\\"modalFooter\\\"><a href=\\\"https://doi.org/10.34191/".$SeriesID."\\\" target=\\\"_blank\\\">https://doi.org/10.34191/".$SeriesID."</a></div>";
+		
+		$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
+	}
+
 	if ( empty($PubURL) ||  is_null($PubURL) || $PubURL === null || $PubURL === 'undefined' || $PubURL === ' ' ) { 
 		$PubName = $PubName;
 	} else {
-		$PubName = "<a href='".$PubURL."' target='_blank'>".$PubName."</a>";
+		//$PubName = "<a href='".$PubURL."' target='_blank'><img src='https://geology.utah.gov/docs/images/pdf16x16.gif'></a> - ".$PubName;
+		$PubName = $PubName." - <a href='".$PubURL."' target='_blank'>Download</a>";
 	}
-	if ( empty($PubURL) ||  is_null($PubURL) || $PubURL === null || $PubURL === 'undefined' || $PubURL === ' ' ) { 
+	/*if ( empty($PubURL) ||  is_null($PubURL) || $PubURL === null || $PubURL === 'undefined' || $PubURL === ' ' ) { 
 		$PubURLString = "";
 	} else {
 		$PubURLString = "<a href='".$PubURL."' target='_blank'><img src='https://geology.utah.gov/docs/images/pdf16x16.gif'></a>";
-	}
+	}*/
 	if ( empty($BookstoreURL) ||  is_null($BookstoreURL) || $BookstoreURL === null || $BookstoreURL === 'undefined' || $BookstoreURL === ' ' ) { 
 		$BookstoreURLString = "";
 	} else if (strpos($SeriesID, 'MO-1') !== false) {
@@ -168,7 +200,7 @@ while ($result->fetch()){
 	}
 	
 	//add Vector Service or Image Service preview map url if any
-	if ($ServiceName == '30x60_Quads' || $ServiceName == '7_5_Quads' || $ServiceName == 'Other_Quads' || $ServiceName == 'FigureMaps') {
+	/*if ($ServiceName == '30x60_Quads' || $ServiceName == '7_5_Quads' || $ServiceName == 'Other_Quads' || $ServiceName == 'FigureMaps') {
 			$PreviewMapURL = " - <a class='fancybox' data-fancybox-type='iframe' href='https://geology.utah.gov/apps/publications/map.html?servName=".$ServiceName."&mobLat=".$Latitude."&popupFL=".$PopupFeatureLayer."&lat=".$CameraOffset."&long=".$Longitude."&seriesID=".$SeriesID."&xsection=".$xsection."&lithcolumn=".$lithcolumn."'><img src='https://geology.utah.gov/docs/images/map.png' width='16'></a>";
 	} else if ($ServiceName == 'MD_24K' && $PopupFeatureLayer != null){
 			$PreviewMapURL = " - <a class='fancybox' data-fancybox-type='iframe' href='https://geology.utah.gov/apps/publications/map.html?servName=".$ServiceName."&mobLat=".$Latitude."&popupFL=".$PopupFeatureLayer."&lat=".$CameraOffset."&long=".$Longitude."&seriesID=".$SeriesID."&xsection=".$xsection."&lithcolumn=".$lithcolumn."'><img src='https://geology.utah.gov/docs/images/map.png' width='16'></a>";
@@ -177,7 +209,7 @@ while ($result->fetch()){
 	} else {
 			//$PreviewMapURL = "<something></something>";
 			$PreviewMapURL = "";
-	};
+	};*/
 
 	/*if ($PubPrevLink != null && $PubURL != null && preg_match("/iPhone|iPad|iPod|webOS/", $_SERVER['HTTP_USER_AGENT'])) {
 		$PubPrevLinkURL = " - <a class='fancybox' data-fancybox-type='iframe' href='".$PubPrevLink."'>Publication</a>";
@@ -227,10 +259,10 @@ while ($result->fetch()){
 		'pub_scale' => $PubScale,
 		//'notes' => $PubNotes,
 		'keywords' => $KeyWords,
-		'pdf_link4AlphList' => $PubURLString . $PreviewMapURL,
+		//'pdf_link4AlphList' => $PubURLString . $PreviewMapURL,
 		'buy_link4AlphList' => $BookstoreURLString,
 		'series' => $Series,
-		'gis_link' => $popupLink,
+		'linksInPopup' => $popupLink,
 		//'quad_name' => $QuadName,
 		//'pub_name_basic' => $PubName,
 		//'pub_url' => $PubURL,
