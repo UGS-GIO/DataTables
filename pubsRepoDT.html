@@ -22,6 +22,7 @@
   max-height: 100%;
   border-radius: 3px;
   box-sizing: border-box;
+  overflow: auto;
   
   /* A bit of padding around image */
   padding: 1.5rem;
@@ -33,7 +34,7 @@
 
 /* this is to fix the dang accordions in the "About UGS Publication Series" section that wasn't blurring with the modal window open */
 div .flex_column {
-    z-index: auto;
+    z-index: auto; 
 }
 
 #fullScreen {
@@ -182,10 +183,15 @@ tr.filters {
 .button.clicked {
 	background-color: #007cba !important;
 }
+
+@media screen and (max-width: 640px)
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter {
+    text-align: right !important;
+}
 	
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 640px) {
   .button {
-    top: 2px;
+    top: 47px;
   }
   #seventyfive {
     margin: 53px 0 0 0;
@@ -250,7 +256,7 @@ tr.filters {
 
 			var table = $('#example').DataTable( {
 				ajax: {
-					url: "pubsRepoDT.php", //needs apps/publications/ added when put into WordPress
+					url: "https://geology.utah.gov/apps/publications/datatablesGitHub/pubsRepoDT.php", //needs apps/publications/ added when put into WordPress
 					dataSrc: ""
 				},
 				columns: [
@@ -279,12 +285,6 @@ tr.filters {
 							);
 							var title = $(cell).text();
 							$(cell).html('<input type="text">');
-
-							$('.filters th').eq($(api.column(colIdx).header()).index()).on('search', function() {
-								$('.filters th').eq($(api.column(colIdx).header()).index()).val('');
-								$('.filters th').eq($(api.column(colIdx).header()).index()).keyup();
-								console.log('fired');
-							});
 		
 							// On every keypress in this input
 							$(
