@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title id='Description'>Filtered Energy and Mineral Pubs</title>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html;" charset="utf-8" />
+	
+<style>
+.myModal {
+  /* Default to hidden */
+  display: none;
+
+  position: fixed;
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 100%;
+  /*height: 400px;*/
+  max-height: 100%;
+  border-radius: 3px;
+  box-sizing: border-box;
+  
+  /* A bit of padding around image */
+  padding: 1.5rem;
+
+  /* Translucent background */
+  background: rgba(255, 255, 255, 0.99);
+  box-shadow: 0 0 27px 10px rgba(0, 0, 0, 0.1);
+}
+
+.select2-selection__clear span {
+    font-size: 1.75rem
+}
+
+#top select {
+    margin: 0px;
+    background: #fff;
+    border-radius: 0px;
+}
+
+#top .select2-search input[type="search"] {
+    margin: 0px;
+    margin-top: 5px;
+    margin-left: 5px;
+    background: transparent;
+    border: none;
+    outline: 0;
+    box-shadow: none;
+    -webkit-appearance: textfield;
+    display: inherit;
+    background-color: none
+}
+
+#uiElementWrapper {
+    margin-bottom: 46px;
+}
+
+#fullScreen {
+  /* Default to hidden */
+  display: none;
+
+  position: fixed;
+  z-index: 998;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.myModal #downloadLink {
+	/*display: inline-block;*/
+}
+
+#modalText hr:last-child {
+	display: none;
+}
+
+.myModal hr {
+	margin-top: 28px;
+	margin-bottom: 8px;
+	border: solid;
+	border-width: thin;
+}
+
+#modalText {
+	padding: 15px;
+	padding-top: 40px;
+}
+
+#modalTitle {
+    font-size: 1.25rem;
+	float: left;
+}
+
+table, td, #leftAlign {
+     font-size: 15px
+}
+
+.Close {
+  color: #000000;
+    float: right;
+    font-size: 2.5rem !important;
+    margin: -9px -10px 0 0;
+}
+
+.Close:hover, .Close:focus {
+  color: #aaaaaa !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+#modalText hr {
+	margin-top: 8px !important;
+	margin-bottom: 8px;
+	border: none;
+	height: .5px;
+	/* Set the hr color */
+	color: #dac8c8; /* old IE */
+	background-color: #dac8c8; /* Modern Browsers */
+}
+
+#modalText #leftAlign{
+  /* Full width and height */
+  float: left;
+}
+
+#modalText #rightAlign{
+  /* Full width and height */
+  float: right;
+}
+
+th.dt-head-center {
+    vertical-align: middle;
+}	
+th.dt-center {
+    vertical-align: middle;
+}
+td.dt-center a {
+    vertical-align: middle;
+}
+td.dt-head-center a {
+    vertical-align: middle;
+}
+
+.dataTables_wrapper {
+    margin-top: -50px;
+}
+
+.button {
+		color: #ffffff;
+		background-color: #c3512f;
+		padding: 9px 10px 7px;
+		font-size: 13px;
+		min-width: 80px;
+		border-radius: 3px;
+		text-decoration: none;
+		display: inline-block;
+		margin: 3px 0;
+		line-height: 1.2rem;
+		z-index: 1;
+		/*position: relative;*/
+		font-weight: normal;
+		text-align: center;
+		max-width: 100%;
+		font: inherit;
+		vertical-align: baseline;
+		box-sizing: border-box;
+		cursor: pointer;
+	}
+
+.button.clicked {
+		background-color: #007cba !important;
+	}
+	
+@media only screen and (max-width: 600px) {
+  .button {
+    top: 2px;
+  }
+  #seventyfive {
+    margin: 53px 0 0 0;
+  }
+
+}
+	</style>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/autofill/2.3.5/css/autoFill.dataTables.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/colreorder/1.5.2/css/colReorder.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.3.1/css/fixedColumns.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.1.7/css/fixedHeader.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/keytable/2.5.3/css/keyTable.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.6/css/responsive.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.2.7/css/rowReorder.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/scroller/2.0.3/css/scroller.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchbuilder/1.0.0/css/searchBuilder.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/1.2.0/css/searchPanes.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css"/>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script> 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script> -->
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/autofill/2.3.5/js/dataTables.autoFill.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.colVis.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.print.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/colreorder/1.5.2/js/dataTables.colReorder.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.1/js/dataTables.fixedColumns.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.7/js/dataTables.fixedHeader.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/keytable/2.5.3/js/dataTables.keyTable.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/scroller/2.0.3/js/dataTables.scroller.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/searchbuilder/1.0.0/js/dataTables.searchBuilder.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/searchpanes/1.2.0/js/dataTables.searchPanes.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+	
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://geology.utah.gov/apps/publications/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" type="text/css">
+<script type="text/javascript" src="https://geology.utah.gov/apps/publications/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>      
+
+
+	<script type="text/javascript">
+		
+$(document).ready(function() {
+			
+			var table = $('#example').DataTable( {
+				ajax: {
+					url: "empFilterTest.php", //needs apps/publications/ added when put into WordPress
+					dataSrc: ""
+				},
+			    columns: [
+					{ data: "pub_year" }, // n/a,0
+					{ data: "pub_name" }, // 0,1
+					{ data: "pub_author" }, // n/a,2
+					{ data: "series_id" }, // 1,3
+					{ data: "pdf_link4AlphList" }, // 2,4
+					{ data: "attached_data" }, // 3,5
+					{ data: "buy_link4AlphList" }, // 4,6
+					{ data: "keywords"} // 5,7
+				],
+				order: [],
+				columnDefs: [
+					{
+						targets: [4, 6],
+						searchable: false,
+					},
+					{
+						targets: 7,
+						searchable: true,
+						visible: false
+					},
+					{
+						targets: [0, 3, 4, 5, 6],
+						className: 'dt-center'
+					},
+					{
+						targets: [1, 2],
+						className: 'dt-head-center'
+					},
+					{
+						targets: [0, 3, 4, 5, 6],
+						width: '60px'
+					},
+					{
+						targets: [1],
+						width: '250px'
+					},
+					{
+						targets: [2],
+						width: '200px'
+					}
+				],
+				/*dom: 'Bfrtip',
+				buttons: [
+					{
+						extend: 'print',
+						text: 'Print current page',
+						autoPrint: false
+					}
+				],*/
+				fixedHeader: false,
+				paging: false,
+				scrollY: 500,
+				scrollCollapse: true,
+				scrollX: true/*,
+				stateSave: true
+				scroller: true,
+				scrollY: 400,
+				scrollX: true*/
+			});
+			
+			/*$('input[type="search"]').on("keyup", function() {
+				var value = $(this).val().toLowerCase();
+				table.column(0).search(value).column(2).search(value).draw();
+			})*/
+			//things to search "keyword "geoindex" and then each layer has "7.5", "intermediate", "1x2", "irregular""
+			/*$('#annualreportsID').click(function()  {
+				table.column(6).search('').draw();
+				table.column(4).search('').draw();
+				table.column(6).search('annualreport').draw();
+			})*/
+			
+			$('#closeModal').click(function()  {
+				$("#myModal").css("display","none");
+				//$("*").css("filter","none");
+				//$("*").css("filter","none");
+			})
+			$('#closeModal').click(function()  {
+				$("#myModal").css("display","none");
+				$("#fullScreen").css("display","none");
+				//$("*").css("filter","none");
+				//$("*").css("filter","none");
+			})
+			$('#fullScreen').click(function()  {
+				$("#myModal").css("display","none");
+				$("#fullScreen").css("display","none");
+				//$("*").css("filter","none");
+				//$("*").css("filter","none");
+			})
+			/*$("#example").on("click", "#clickMe", function(){
+				$("#myModal").css("display","block");
+				$("body > *:not(body > #myModal)").css("filter","blur(5px)");
+			})*/
+			$("#example").on("click", "#clickMe", function(){
+				$("#myModal").css("display","block");
+				$("#modalTitle").html("<strong>Publication Downloads</strong>");
+				$("#fullScreen").css("display","block");
+				//$("body > *").not("body > #myModal").css("filter","blur(5px)");
+			})
+			
+			
+
+
+			
+			/*var select = document.getElementById('dropdown');
+			var options = ["Beaver", "Box Elder", "Cache", "Carbon", "Daggett"];
+			var optionAttr = ["beaverco", "boxelderco", "cacheco", "carbonco", "daggetco"];
+			for(var i = 0; i < options.length; i++) {
+				var opt = options[i];
+				var optAttr = optionAttr[i];
+				var el = document.createElement("option");
+				el.textContent = opt;
+				el.value = optAttr;
+				select.appendChild(el);
+			}*/
+
+			$('#empTypeDD').multiselect({
+                                includeSelectAllOption: true,
+                        	nonSelectedText: "Select Topic(s)",
+                        	numberDisplayed: 2,
+                        	buttonWidth: '213px'
+                        })
+			$('#locationDD').multiselect({
+                        	maxHeight: 200,
+                        	includeSelectAllOption: true,
+                        	nonSelectedText: "Select Study Area(s)",
+                        	numberDisplayed: 2,
+                        	buttonWidth: '213px'
+                        })	
+			/*$('.js-example-basic-multiple').select2({
+				placeholder: "Select County(ies)",
+				allowClear: true,
+				closeOnSelect: false,
+				//dropdownAutoWidth: false,
+				width: "style='width: 100px'",
+				multiple: true
+			})
+			$('.js-example-basic-multiple2').select2({
+				placeholder: "Select Hazard Type(s)",
+				allowClear: true,
+				closeOnSelect: false,
+				//dropdownAutoWidth: false,
+				width: "style='width: 100px'",
+				multiple: true
+			})*/
+			
+			var searchStringMaps = '';
+			$('#annualreportsID').click(function()  {
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					console.log("fired");
+					if ($('#gis').hasClass("clicked")) {
+						//this condition is when there's only the Hazard Maps button is toggled
+						if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+							console.log("fired");
+							searchStringMaps = '(?=.*annualreport)(?=.*geohazgis)';
+						} 
+						else if (($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0)) {
+							console.log("fired");
+							searchStringMaps = '((?=.*annualreport))((?=.*geohazgis))' + "(" + str + ")";
+						}
+						//this condition is when there is something selected in both counties and hazard type
+						else if ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0) {
+							console.log("fired");
+							searchStringMaps = '((?=.*annualreport))((?=.*geohazgis))' + str;
+						}
+						table.column(7).search(searchStringMaps, true, false).draw();
+						$('#searchStuff2').text("Button-click search expression: " + searchStringMaps);
+						console.log(searchStringMaps);
+					} else	{
+						//this condition is when there's only the Hazard Maps button is toggled
+						if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+							console.log("fired");
+							searchStringMaps = '(?=.*annualreport)';
+						} 
+						else if (($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0)) {
+							console.log("fired");
+							searchStringMaps = '((?=.*annualreport))' + "(" + str + ")";
+						}
+						//this condition is when there is something selected in both counties and hazard type
+						else if ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0) {
+							console.log("fired");
+							searchStringMaps = '((?=.*annualreport))' + str;
+						}
+						table.column(7).search(searchStringMaps, true, false).draw();
+						$('#searchStuff2').text("Button-click search expression: " + searchStringMaps);
+						console.log(searchStringMaps);
+					}
+				} else {
+					if ($('#gis').hasClass("clicked")) {
+						if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+							console.log("fired");
+							searchStringMaps = '(?=.*geohazgis)';
+						} 
+						else if (($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0)) {
+							console.log("fired");
+							if (str.includes("((?=.*annualreport))")) {
+								console.log("fired");
+								searchStringMaps = "(?=.*geohazgis)" + str.substring(0, str.length - 17);
+							} else {						
+								console.log("fired");
+								searchStringMaps = "(?=.*geohazgis)" + str;
+							}
+						}
+						//this condition is when there is something selected in both counties and hazard type
+						else if ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0) {
+							console.log("fired");
+							searchStringMaps = '((?=.*geohazgis))' + str;
+						}
+					} else {
+						console.log("fired");
+						if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+							console.log("fired");
+							searchStringMaps = '';
+						} 
+						/*if (str.includes("((?=.*annualreport))")) {
+							console.log("fired");
+							searchStringMaps = str.substring(0, str.length - 17);
+						} else {						
+							console.log("fired");
+							searchStringMaps = str;
+						} */
+						else if (($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0)) {
+							console.log("fired");
+							if (str.includes("((?=.*annualreport))")) {
+								console.log("fired");
+								searchStringMaps = str.substring(0, str.length - 17);
+							} else {						
+								console.log("fired");
+								searchStringMaps = str;
+							}
+						}
+					}
+					table.column(7).search(searchStringMaps, true, false).draw();
+					$('#searchStuff2').text("Button-click search expression: " + searchStringMaps);
+				}
+			})
+			
+			var searchStringGIS = '';
+			$('#gis').click(function()  {
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					console.log("fired");
+					if ($('#annualreportsID').hasClass("clicked")) {
+						//this condition is when there's only the Hazard Maps button is toggled
+						if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+							console.log("fired");
+							searchStringGIS = '(?=.*annualreport)(?=.*geohazgis)';
+						} 
+						else if (($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0)) {
+							console.log("fired");
+							searchStringGIS = '((?=.*annualreport))((?=.*geohazgis))' + "(" + str + ")";
+						}
+						//this condition is when there is something selected in both counties and hazard type
+						else if ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0) {
+							console.log("fired");
+							searchStringGIS = '((?=.*annualreport))((?=.*geohazgis))' + str;
+						}
+						table.column(7).search(searchStringGIS, true, false).draw();
+						$('#searchStuff2').text("Button-click search expression: " + searchStringGIS);
+						console.log(searchStringGIS);
+					} else	{
+						//this condition is when there's only the Hazard Maps button is toggled
+						if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+							console.log("fired");
+							searchStringGIS = '(?=.*geohazgis)';
+						} 
+						else if (($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0)) {
+							console.log("fired");
+							searchStringGIS = '((?=.*geohazgis))' + "(" + str + ")";
+						}
+						//this condition is when there is something selected in both counties and hazard type
+						else if ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0) {
+							console.log("fired");
+							searchStringGIS = '((?=.*geohazgis))' + str;
+						}
+						table.column(7).search(searchStringGIS, true, false).draw();
+						$('#searchStuff2').text("Button-click search expression: " + searchStringGIS);
+						console.log(searchStringGIS);
+					}
+				} else {
+					if ($('#annualreportsID').hasClass("clicked")) {
+						if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+							console.log("fired");
+							searchStringGIS = '(?=.*annualreport)';
+						} 
+						else if (($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0)) {
+							console.log("fired");
+							if (str.includes("((?=.*geohazgis))")) {
+								console.log("fired");
+								searchStringGIS = "(?=.*annualreport)" + str.substring(0, str.length - 17);
+							} else {						
+								console.log("fired");
+								searchStringGIS = "(?=.*annualreport)" + str;
+							}
+						}
+						//this condition is when there is something selected in both counties and hazard type
+						else if ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0) {
+							console.log("fired");
+							searchStringGIS = '((?=.*annualreport))' + str;
+						}
+					} else {
+						console.log("fired");
+						if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+							console.log("fired");
+							searchStringGIS = '';
+						} 
+						/*if (str.includes("((?=.*geohazgis))")) {
+							console.log("fired");
+							searchStringGIS = str.substring(0, str.length - 17);
+						} else {						
+							console.log("fired");
+							searchStringGIS = str;
+						}*/
+						else if (($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) || ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0) || ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0)) {
+							console.log("fired");
+							if (str.includes("((?=.*geohazgis))")) {
+								console.log("fired");
+								searchStringGIS = str.substring(0, str.length - 17);
+							} else {						
+								console.log("fired");
+								searchStringGIS = str;
+							}
+						}
+					}
+					table.column(7).search(searchStringGIS, true, false).draw();
+					$('#searchStuff2').text("Button-click search expression: " + searchStringGIS);
+				}
+			})
+			
+			$('#allPubs').click(function()  {
+				table.column(7).search('').draw();
+				table.column(5).search('').draw();
+				$('#gis, #annualreportsID').removeClass("clicked");
+			})
+			
+			var str = '';
+			
+			$('#locationDD, #empTypeDD').on('change', function(e) {
+				if ($('#locationDD').find(':selected').length === 0 && $('#empTypeDD').find(':selected').length === 0) {
+					if ($('#annualreportsID').hasClass("clicked") && $('#gis').hasClass("clicked")) {
+						console.log("fired");
+						//str = searchStringMaps;
+						str = '((?=.*annualreport))((?=.*geohazgis))';
+					}
+					else if ($('#annualreportsID').hasClass("clicked")) {
+						console.log("fired");
+						str = '(?=.*annualreport)';
+					} else if ($('#gis').hasClass("clicked")) {
+						console.log("fired");
+						str = '(?=.*geohazgis)';
+					} else {
+						console.log("fired");
+						str = '';
+					}		
+				} 
+				//this condition is when there's only one thing selected in the Counties dropdown and nothing in hazard type
+				//this condition is when there's only one thing selected in the hazard type dropdown and nothing in Counties
+				else if ($('#locationDD').find(':selected').length === 1 && $('#empTypeDD').find(':selected').length === 0) {
+					console.log("fired");
+					str = '';
+					if ($('#annualreportsID').hasClass("clicked") && $('#gis').hasClass("clicked")) {
+						console.log("fired");
+						$('#locationDD').find(':selected').each(function() {
+							str += "((?=.*" + $(this).attr('value') + "))" + "((?=.*annualreport))((?=.*geohazgis))";
+						});
+					}
+					else if ($('#annualreportsID').hasClass("clicked")) {
+						console.log("fired");
+						str = '';
+						$('#locationDD').find(':selected').each(function() {
+							str += "((?=.*" + $(this).attr('value') + "))" + "((?=.*annualreport))";
+						});
+					} else if ($('#gis').hasClass("clicked")) {
+						console.log("fired");
+						$('#locationDD').find(':selected').each(function() {
+							str += "((?=.*" + $(this).attr('value') + "))" + "((?=.*geohazgis))";
+						});
+						console.log(str);
+						console.log('i ran');
+					} else {
+						console.log("fired");
+						$('#locationDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")";
+						});
+					}
+				} else if ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) {
+					console.log("fired");
+					str = '';
+					if ($('#annualreportsID').hasClass("clicked") && $('#gis').hasClass("clicked")) {
+						console.log("fired");
+						$('#empTypeDD').find(':selected').each(function() {
+							str += "((?=.*" + $(this).attr('value') + "))" + "((?=.*annualreport))((?=.*geohazgis))";
+						});
+					}
+					else if ($('#annualreportsID').hasClass("clicked")) {
+						console.log("fired");
+						$('#empTypeDD').find(':selected').each(function() {
+							str += "((?=.*" + $(this).attr('value') + "))" + "((?=.*annualreport))";
+						});
+					} else if ($('#gis').hasClass("clicked")) {
+						console.log("fired");
+						$('#empTypeDD').find(':selected').each(function() {
+							str += "((?=.*" + $(this).attr('value') + "))" + "((?=.*geohazgis))";
+						});
+						console.log(str);
+						console.log('i ran');
+					} else {
+						console.log("fired");
+						$('#empTypeDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")";
+						});
+					}
+				} 
+				//this condition is when there's only one thing selected in the hazard type dropdown and nothing in Counties
+				/*else if ($('#empTypeDD').find(':selected').length === 1 && $('#locationDD').find(':selected').length === 0) {
+					str = '';
+					$('#empTypeDD').find(':selected').each(function() {
+						str += "(?=.*" + $(this).attr('value') + ")";
+					});
+					console.log(str);
+					console.log('i ran');
+				}*/
+				//this condition is when there's more than one thing selected in the counties dropdown and nothing in hazard type
+				else if ($('#empTypeDD').find(':selected').length > 1 && $('#locationDD').find(':selected').length === 0) {
+					console.log("fired");
+					str = '';
+					if ($('#annualreportsID').hasClass("clicked") && $('#gis').hasClass("clicked")) {
+						$('#empTypeDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str = "(" + str.substring(0, str.length - 1) + ")((?=.*annualreport))((?=.*geohazgis))";
+						console.log(str);
+					}
+					else if ($('#annualreportsID').hasClass("clicked")) {
+						$('#empTypeDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str = "(" + str.substring(0, str.length - 1) + ")((?=.*annualreport))";
+						console.log(str);
+					} else if ($('#gis').hasClass("clicked")) {
+						$('#empTypeDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str = "(" + str.substring(0, str.length - 1) + ")((?=.*geohazgis))";
+						console.log(str);
+					} else {
+						$('#empTypeDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str = "(" + str.substring(0, str.length - 1) + ")";
+						console.log(str);
+					}
+				} else if ($('#locationDD').find(':selected').length > 1 && $('#empTypeDD').find(':selected').length === 0) {
+					console.log("fired");
+					str = '';
+					if ($('#annualreportsID').hasClass("clicked") && $('#gis').hasClass("clicked")) {
+						console.log("fired");
+						$('#locationDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str = "(" + str.substring(0, str.length - 1) + ")((?=.*annualreport))((?=.*geohazgis))";
+						console.log(str);
+					}
+					else if ($('#annualreportsID').hasClass("clicked")) {
+						console.log("fired");
+						$('#locationDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str = "(" + str.substring(0, str.length - 1) + ")((?=.*annualreport))";
+						console.log(str);
+					} else if ($('#gis').hasClass("clicked")) {
+						console.log("fired");
+						$('#locationDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str = "(" + str.substring(0, str.length - 1) + ")((?=.*geohazgis))";
+						console.log(str);
+					} else {
+						console.log("fired");
+						$('#locationDD').find(':selected').each(function() {
+							str += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str = "(" + str.substring(0, str.length - 1) + ")";
+						console.log(str);
+					}
+				} 
+				
+				//this condition is when there is something selected in both counties and hazard type
+				else if ($('#locationDD').find(':selected').length != 0 && $('#empTypeDD').find(':selected').length != 0) {
+					str = '';
+					if ($('#annualreportsID').hasClass("clicked") && $('#gis').hasClass("clicked")) {
+						var str1 = '';
+						var str2 = '';
+						$('#locationDD').find(':selected').each(function() {
+								str1 += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						$('#empTypeDD').find(':selected').each(function() {
+								str2 += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str1 = "(" + str1.substring(0, str1.length - 1) + ")";
+						str2 = "(" + str2.substring(0, str2.length - 1) + ")";
+						str = str1 + str2 + "((?=.*annualreport))((?=.*geohazgis))";
+						console.log(str);
+						console.log("actually, i'm just gonna run now cuz i'm cool like that");
+					}	
+					else if ($('#annualreportsID').hasClass("clicked")) {
+						var str1 = '';
+						var str2 = '';
+						$('#locationDD').find(':selected').each(function() {
+								str1 += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						$('#empTypeDD').find(':selected').each(function() {
+								str2 += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str1 = "(" + str1.substring(0, str1.length - 1) + ")";
+						str2 = "(" + str2.substring(0, str2.length - 1) + ")";
+						str = str1 + str2 + "((?=.*annualreport))";
+						console.log(str);
+						console.log("actually, i'm just gonna run now cuz i'm cool like that");
+					}	
+					else if ($('#gis').hasClass("clicked")) {
+						var str1 = '';
+						var str2 = '';
+						$('#locationDD').find(':selected').each(function() {
+								str1 += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						$('#empTypeDD').find(':selected').each(function() {
+								str2 += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str1 = "(" + str1.substring(0, str1.length - 1) + ")";
+						str2 = "(" + str2.substring(0, str2.length - 1) + ")";
+						str = str1 + str2 + "((?=.*geohazgis))";
+						console.log(str);
+						console.log("actually, i'm just gonna run now cuz i'm cool like that");
+					} else {
+						var str1 = '';
+						var str2 = '';
+						$('#locationDD').find(':selected').each(function() {
+								str1 += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						$('#empTypeDD').find(':selected').each(function() {
+								str2 += "(?=.*" + $(this).attr('value') + ")|";
+						});
+						str1 = "(" + str1.substring(0, str1.length - 1) + ")";
+						str2 = "(" + str2.substring(0, str2.length - 1) + ")";
+						str = str1 + str2;
+						console.log(str);
+						console.log("actually, i'm just gonna run now cuz i'm cool like that");
+					}
+				}
+				$('#searchStuff').text("Dropdown search expression: " + str);
+				table.column(7).search(str, true, false).draw();
+			})
+			
+		});
+
+	</script>
+
+
+</head>
+	<div id="uiElementWrapper">
+       <!-- Commented out because EMP pubs dont have location keywords yet
+	   <select id="locationDD" class="js-example-basic-multiple" name="emppubsLocation" multiple="multiple">
+		<option value="statewide">Statewide</option>		
+		<option value="beaverco">Beaver</option>
+		<option value="boxelderco">Box Elder</option>
+		<option value="cacheco">Cache</option>
+		<option value="carbonco">Carbon</option>
+		<option value="daggettco">Daggett</option>
+		<option value="davisco">Davis</option>
+		<option value="duchesneco">Duchesne</option>
+		<option value="emeryco">Emery</option>
+		<option value="garfieldco">Garfield</option>
+		<option value="grandco">Grand</option>
+		<option value="ironco">Iron</option>
+		<option value="juabco">Juab</option>
+		<option value="kaneco">Kane</option>
+		<option value="millardco">Millard</option>
+		<option value="morganco">Morgan</option>
+		<option value="piuteco">Piute</option>
+		<option value="richco">Rich</option>
+		<option value="saltlakeco">Salt Lake</option>
+		<option value="sanjuanco">San Juan</option>
+		<option value="sanpeteco">Sanpete</option>
+		<option value="sevierco">Sevier</option>
+		<option value="summitco">Summit</option>
+		<option value="tooeleco">Tooele</option>
+		<option value="uintahco">Uintah</option>
+		<option value="utahco">Utah</option>
+		<option value="wasatchco">Wasatch</option>
+		<option value="washingtonco">Washington</option>
+		<option value="wayneco">Wayne</option>
+		<option value="weberco">Weber</option>		
+	</select> -->
+	<select id="empTypeDD" class="js-example-basic-multiple2" name="emppubsEMPType" multiple="multiple">
+		<option value="generaloil">Oil</option>
+		<option value="naturalgas">Natural Gas</option>
+		<option value="coal">Coal</option>
+		<option value="metals">Metals</option>
+		<option value="indminerals">Industrial Minerals</option>
+		<option value="geothermal">Geothermal</option>
+	</select>
+        <button id="annualreportsID" class="button">Annual Reports</button>	
+       <!-- <button id="gis" class="button">GIS Available</button> -->
+       <!--<button id="allPubs" class="button">Clear Filters</button>-->
+</div>
+	<table id="example" class="display" style="width:100%">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Title</th>
+				<th>Author(s)</th>				
+				<th>Series #</th>
+				<th>Booklet</th>
+				<th>Publication Downloads</th>
+				<th>Purchase</th>
+				<th>Keywords</th>
+			</tr>
+		</thead>
+	</table>
+	
+	<div id="fullScreen"></div>
+	<div id="myModal" class="myModal">
+		
+		<div id="modalHeader">
+			<span id="modalTitle"><strong></strong></span>
+			<span id="closeModal" class="Close"><strong>×</strong></span>
+		</div>
+		
+		<div id="modalText"></div>
+	</div>
