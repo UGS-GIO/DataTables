@@ -169,13 +169,11 @@ while ($result->fetch()){
 		//print "</pre>";
 	}  //end if
 
-	//create link to publication for the top of the modal window
+	//create link to DOI page for the bottom of the modal window
 	if ( empty($PubURL) ||  is_null($PubURL) || $PubURL === null || $PubURL === 'undefined' || $PubURL === ' ' ) { 
 		$popupContent = "";
 	} else {
 		$popupContent .= "<br><div id=\\\"downloadLink\\\"><div id=\\\"modalFooter\\\"><a href=\\\"https://doi.org/10.34191/".$SeriesID."\\\" target=\\\"_blank\\\">https://doi.org/10.34191/".$SeriesID."</a></div>";
-		
-		$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
 	}
 
 	if ( empty($PubURL) ||  is_null($PubURL) || $PubURL === null || $PubURL === 'undefined' || $PubURL === ' ' ) { 
@@ -253,26 +251,13 @@ while ($result->fetch()){
 		'series_id' => $SeriesID,
 		'pub_year' => $PubYear,
 		'pub_name' => $PubName,
-		//'map_preview' => $PreviewMapURL,
-		//'pub_preview' => $PubPrevLinkURL,
 		'pub_author' => $PubAuthor . $PubSecAuthorString,
 		'pub_scale' => $PubScale,
-		//'notes' => $PubNotes,
 		'keywords' => $KeyWords,
-		//'pdf_link4AlphList' => $PubURLString . $PreviewMapURL,
 		'buy_link4AlphList' => $BookstoreURLString,
 		'series' => $Series,
 		'linksInPopup' => $popupLink,
-		//'quad_name' => $QuadName,
-		//'pub_name_basic' => $PubName,
-		//'pub_url' => $PubURL,
-		//'pdf_link4AlphList' => "<a href='".$PubURL."' target='_blank'><img src='docs/images/pdf16x16.gif'></a>",
-		//'buy_link4AlphList' => "<a href='https://utahmapstore.com/products/".$SeriesID."' target='_blank'><img src='docs/images/buy.png'></a>"
-		//'sLayer' => $ServiceLayer,
-		//'servName' => $ServiceName,
-		//'cam_offset' => $Latitude,
-		//'long' => $Longitude,
-		//'popupFL' => $PopupFeatureLayer
+		'mapType' => $mapType
 	);
 
 }

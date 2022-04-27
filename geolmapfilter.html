@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="Content-Type" content="text/html;" charset="utf-8" />
 	
-<style>
+<!-- <style>
 .myModal {
   /* Default to hidden */
   display: none;
@@ -160,7 +160,202 @@ td.dt-head-center a {
   }
 
 }
+	</style> -->
+	
+<style>
+.myModal {
+  /* Default to hidden */
+  display: none;
+
+  position: fixed;
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 100%;
+  /*height: 400px;*/
+  max-height: 100%;
+  border-radius: 3px;
+  box-sizing: border-box;
+  overflow: auto;
+  
+  /* A bit of padding around image */
+  padding: 1.5rem;
+
+  /* Translucent background */
+  background: rgba(255, 255, 255, 0.99);
+  box-shadow: 0 0 27px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* this is to fix the dang accordions in the "About UGS Publication Series" section that wasn't blurring with the modal window open */
+div .flex_column {
+    z-index: auto; 
+}
+
+#fullScreen {
+  /* Default to hidden */
+  display: none;
+
+  position: fixed;
+  z-index: 998;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/*.myModal #downloadLink {
+	display: inline-block;
+}
+*/
+
+thead input {
+        width: 100%;
+}
+
+/*#modalText hr:last-child {
+	display: none;
+}*/
+
+.myModal hr {
+	margin-top: 28px;
+	margin-bottom: 8px;
+	border: solid;
+	border-width: thin;
+}
+
+#modalText {
+	padding: 15px;
+	padding-top: 40px;
+}
+
+#modalTitle {
+    font-size: 1.25rem;
+	float: left;
+}
+.Close {
+  color: #000000;
+    float: right;
+    font-size: 2.5rem !important;
+    margin: -9px -10px 0 0;
+}
+
+.Close:hover, .Close:focus {
+  color: #aaaaaa !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+#modalText hr {
+	margin-top: 8px !important;
+	margin-bottom: 8px;
+	border: none;
+	height: .5px;
+	/* Set the hr color */
+	color: #dac8c8; /* old IE */
+	background-color: #dac8c8; /* Modern Browsers */
+}
+
+#modalText #leftAlign{
+  /* Full width and height */
+  float: left;
+}
+
+#modalText #rightAlign{
+  /* Full width and height */
+  float: right;
+}
+
+#modalText #modalPubDeets{
+  /* Full width and height */
+  text-align: center;
+  font-weight: bold;
+}
+
+#modalText #modalFooter{
+  /* Full width and height */
+  text-align: center;
+}
+
+.avia_code_block_1 {
+    margin-top: -50px
+}
+th.dt-head-center {
+    vertical-align: bottom;
+}	
+td.dt-head-center a {
+    vertical-align: bottom;
+}
+td.dt-body-center a {
+    vertical-align: middle;
+}
+td.dt-body-center {
+    vertical-align: middle;
+}
+
+table.dataTable thead th.sorting {
+	border-bottom: none
+}
+
+tr.filters {
+    background-color: #fcfcfc !important;
+}
+
+.filters input[type="text"] {
+	margin-bottom: 0 !important
+}
+
+.button {
+		color: #ffffff;
+		border-color: #a1300d;
+		background-color: #c3512f;
+		padding: 9px 10px 7px;
+		font-size: 13px;
+		min-width: 80px;
+		border-radius: 3px;
+		text-decoration: none;
+		display: inline-block;
+		border-bottom-style: solid;
+		border-bottom-width: 1px;
+		margin: 3px 0;
+		line-height: 1.2em;
+		top: 57px;
+		z-index: 1;
+		position: relative;
+		font-weight: normal;
+		text-align: center;
+		max-width: 100%;
+		border: 0;
+		font: inherit;
+		vertical-align: baseline;
+		box-sizing: border-box;
+		cursor: pointer;
+	}
+
+.button.clicked {
+	background-color: #007cba !important;
+}
+
+@media screen and (max-width: 640px)
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter {
+    text-align: right !important;
+}
+	
+@media only screen and (max-width: 640px) {
+  .button {
+    top: 47px;
+  }
+  #seventyfive {
+    margin: 53px 0 0 0;
+  }
+
+}
 	</style>
+
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"/>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/autofill/2.3.5/css/autoFill.dataTables.css"/>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css"/>
@@ -210,24 +405,86 @@ td.dt-head-center a {
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			// Setup - add a text input to each footer cell
+			$('#example thead tr')
+				.clone(true)
+				.addClass('filters')
+				.appendTo( '#example thead' );
+			
 			var table = $('#example').DataTable( {
 				ajax: {
-					url: "https://geology.utah.gov/apps/publications/geolmapFilter.php", //needs apps/publications/ added when put into WordPress
+					url: "https://geology.utah.gov/apps/publications/datatablesGitHub/geolmapFilter.php", //needs apps/publications/ added when put into WordPress
 					dataSrc: ""
 				},
 			    columns: [
-					{ data: "quad_name" },
+					/*{ data: "quad_name" },
 					{ data: "pub_name" },
 					{ data: "series_id" },
 					{ data: "pub_scale" },
 					{ data: "pdf_link4AlphList" },
 					{ data: "gis_link" },
 					{ data: "buy_link4AlphList" },
-					{ data: "keywords"}
+					{ data: "keywords"}*/
+					{ data: "quad_name" }, // 0 stays 0
+					{ data: "pub_year" }, // 1 is new
+					{ data: "pub_name" }, // 1 change to 2
+					{ data: "pub_author" }, // 3 is new
+					{ data: "series_id" }, // 2 change to 4
+					{ data: "linksInPopup" }, // 5 stays 5
+					{ data: "buy_link4AlphList" }, // 5 change to 6
+					{ data: "pub_scale" }, // 3 change to 7
+					{ data: "keywords"} //6 change to 8 - only here for searching, hidden in columnDefs
 				],
 				order: [],
+				initComplete: function () {
+					var api = this.api();
+		
+					// For each column
+					api
+						.columns(':visible') // ':visible' is very important here since we have hidden columns
+						.eq(0)
+						.each(function (colIdx) {
+							// Set the header cell to contain the input element
+							var cell = $('.filters th').eq(
+								$(api.column(colIdx).header()).index()
+							);
+							var title = $(cell).text();
+							$(cell).html('<input type="text">');
+		
+							// On every keypress in this input
+							$(
+								'input',
+								$('.filters th').eq($(api.column(colIdx).header()).index())
+							)
+								.off('keyup change')
+								.on('keyup change', function (e) {
+									e.stopPropagation();
+		
+									// Get the search value
+									$(this).attr('title', $(this).val());
+									var regexr = '({search})'; //$(this).parents('th').find('select').val();
+		
+									var cursorPosition = this.selectionStart;
+									// Search the column for that value
+									api
+										.column(colIdx)
+										.search(
+											this.value != ''
+												? regexr.replace('{search}', '(((' + this.value + ')))')
+												: '',
+											this.value != '',
+											this.value == ''
+										)
+										.draw();
+		
+									$(this)
+										.focus()[0]
+										.setSelectionRange(cursorPosition, cursorPosition);
+								});
+						});
+				},
 				columnDefs: [
-					{
+					/*{
 						targets: [1, 4, 6],
 						searchable: false,
 					},
@@ -259,6 +516,48 @@ td.dt-head-center a {
 					{
 						targets: [1],
 						width: '150px'
+					}*/
+					{
+						//targets: [1, 4, 6],
+						targets: [6],
+						searchable: false,
+					},
+					{
+						//targets: 8,
+						targets: 8,
+						searchable: true,
+						visible: false
+					},
+					{
+						//targets: [0, 3, 4, 5, 6],
+						targets: [1, 4, 5, 6, 7],
+						className: 'dt-body-center'
+					},
+					{
+						//targets: [1, 2, 7],
+						targets: [0, 2],
+						className: 'dt-body-left'
+					},
+					{
+						//targets: [0, 1, 2, 3, 4, 5, 6, 7],
+						targets: [0, 1, 2, 3, 4, 5, 6, 7],
+						className: 'dt-head-center'
+					},
+					{
+						targets: [0],
+						width: '75px'
+					},
+					{
+						targets: [2],
+						width: '250px'
+					},
+					{
+						targets: [3],
+						width: '200px'
+					},
+					{
+						targets: [1, 4, 5, 6, 7],
+						width: '60px'
 					}
 				],
 				/*dom: 'Bfrtip',
@@ -271,7 +570,7 @@ td.dt-head-center a {
 				],*/
 				fixedHeader: true,
 				paging: false,
-				scrollY: 500,
+				scrollY: 690,
 				scrollCollapse: true,
 				scrollX: true/*,
 				stateSave: true
@@ -315,38 +614,91 @@ td.dt-head-center a {
 			
 			//things to search "keyword "geoindex" and then each layer has "7.5", "intermediate", "1x2", "irregular""
 			$('#seventyfive').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(7).search('24k').draw();
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(8).search('').draw();
+					table.column(5).search('').draw();
+					table.column(8).search('24k').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(8).search('').draw();
+				}
 			})
 			$('#thirtysixty').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(7).search('intermediate').draw();
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(8).search('').draw();
+					table.column(5).search('').draw();
+					table.column(8).search('intermediate').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(8).search('').draw();
+				}
 			})
 			$('#onebytwo').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(7).search('1x2').draw();
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(8).search('').draw();
+					table.column(5).search('').draw();
+					table.column(8).search('1x2').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(8).search('').draw();
+				}
 			})
 			$('#irreg').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(7).search('irregular').draw();
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(8).search('').draw();
+					table.column(5).search('').draw();
+					table.column(8).search('irregular').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(8).search('').draw();
+				}
 			})
 			$('#clear').click(function()  {
-				table.column(7).search('').draw();
+				$('.button').removeClass("clicked");
+				table.column(8).search('').draw();
 				table.column(5).search('').draw();
+				$('input[type="text"]').val('');
+				$('input[type="text"]').keyup();
 			})
 			$('#gisRaster').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(5).search('helloRaster').draw();
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					table.column(8).search('').draw();
+					table.column(5).search('').draw();
+					table.column(5).search('helloRaster').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(5).search('').draw();
+				}
 			})
 			$('#gisVector').click(function()  {
-				table.column(7).search('').draw();
-				table.column(5).search('').draw();
-				table.column(5).search('helloVector').draw();
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					table.column(8).search('').draw();
+					table.column(5).search('').draw();
+					table.column(5).search('helloVector').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(5).search('').draw();
+				}
 			})
 		});
 	</script>
@@ -366,14 +718,23 @@ td.dt-head-center a {
 	<table id="example" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>Quadrangle/Area</th>
-                <th>Map Name</th>
-                <th>Series #</th>
-				<th>Map Scale</th>				
-                <th>PDF File</th>
-                <th>Publication Downloads</th>
-                <th>Purchase</th>
-				<th>Keywords</th>
+                <!-- <th>Quadrangle/Area</th> //0
+                <th>Map Name</th> //1
+                <th>Series #</th> //2
+				<th>Map Scale</th> //3			
+                <th>PDF File</th> //4
+				<th>Publication Downloads</th> //5
+                <th>Purchase</th> //6
+				<th>Keywords</th> //7 -->
+				<th>Quadrangle/Area</th> <!-- 0 -->
+				<th>Date</th> <!-- 1 -->
+                <th>Map Name</th> <!-- 2 -->
+                <th>Author(s)</th> <!-- 3 -->
+				<th>Series #</th> <!-- 4 -->
+                <th>Publication & Data</th> <!-- 5 -->
+                <th>Purchase</th> <!-- 6 -->
+                <th>Map Scale</th> <!-- 7 -->
+				<th>Keywords</th> <!-- 8 -->
 			</tr>
         </thead>
     </table>	
