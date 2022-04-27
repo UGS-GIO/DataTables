@@ -297,10 +297,6 @@ td.dt-body-center {
     vertical-align: middle;
 }
 
-table.dataTable thead th.sorting {
-	border-bottom: none
-}
-
 tr.filters {
     background-color: #fcfcfc !important;
 }
@@ -405,12 +401,6 @@ tr.filters {
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			// Setup - add a text input to each footer cell
-			$('#example thead tr')
-				.clone(true)
-				.addClass('filters')
-				.appendTo( '#example thead' );
-			
 			var table = $('#example').DataTable( {
 				ajax: {
 					url: "https://geology.utah.gov/apps/publications/datatablesGitHub/geolmapFilter.php", //needs apps/publications/ added when put into WordPress
@@ -436,53 +426,6 @@ tr.filters {
 					{ data: "keywords"} //6 change to 8 - only here for searching, hidden in columnDefs
 				],
 				order: [],
-				initComplete: function () {
-					var api = this.api();
-		
-					// For each column
-					api
-						.columns(':visible') // ':visible' is very important here since we have hidden columns
-						.eq(0)
-						.each(function (colIdx) {
-							// Set the header cell to contain the input element
-							var cell = $('.filters th').eq(
-								$(api.column(colIdx).header()).index()
-							);
-							var title = $(cell).text();
-							$(cell).html('<input type="text">');
-		
-							// On every keypress in this input
-							$(
-								'input',
-								$('.filters th').eq($(api.column(colIdx).header()).index())
-							)
-								.off('keyup change')
-								.on('keyup change', function (e) {
-									e.stopPropagation();
-		
-									// Get the search value
-									$(this).attr('title', $(this).val());
-									var regexr = '({search})'; //$(this).parents('th').find('select').val();
-		
-									var cursorPosition = this.selectionStart;
-									// Search the column for that value
-									api
-										.column(colIdx)
-										.search(
-											this.value != ''
-												? regexr.replace('{search}', '(((' + this.value + ')))')
-												: '',
-											this.value != '',
-											this.value == ''
-										)
-										.draw();
-		
-									$(this)
-										.focus()[0]
-										.setSelectionRange(cursorPosition, cursorPosition);
-								});
-						});
-				},
 				columnDefs: [
 					/*{
 						targets: [1, 4, 6],
@@ -492,14 +435,6 @@ tr.filters {
 						targets: 7,
 						searchable: true,
 						visible: false
-					},
-					{
-						targets: [2, 3, 4, 5, 6],
-						className: 'dt-center'
-					},
-					{
-						targets: [0, 1],
-						className: 'dt-head-center'
 					},
 					{
 						targets: [3, 4, 5, 6],
@@ -530,12 +465,12 @@ tr.filters {
 					},
 					{
 						//targets: [0, 3, 4, 5, 6],
-						targets: [1, 4, 5, 6, 7],
+						targets: [0, 1, 4, 5, 6, 7],
 						className: 'dt-body-center'
 					},
 					{
 						//targets: [1, 2, 7],
-						targets: [0, 2],
+						targets: [2, 3],
 						className: 'dt-body-left'
 					},
 					{
