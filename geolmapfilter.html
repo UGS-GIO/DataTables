@@ -637,6 +637,20 @@ tr.filters {
 					table.column(5).search('').draw();
 				}
 			})
+			$('#gems').click(function()  {
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(8).search('').draw();
+					table.column(5).search('').draw();
+					table.column(8).search('gems').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(8).search('').draw();
+				}
+			})
 		});
 	</script>
 
@@ -650,7 +664,7 @@ tr.filters {
 <button id="irreg" class="button">Other Maps</button>
 <button id="gisVector" class="button">Vector GIS Available</button>
 <button id="gisRaster" class="button">Raster GIS Available</button>
-<button id="gems" class="button">GEMS</button>
+<button id="gems" class="button">GeMS</button>
 <button id="clear" class="button">Clear Filter</button>
 
 	<table id="example" class="display" style="width:100%">
