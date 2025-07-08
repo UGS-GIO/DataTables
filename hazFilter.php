@@ -65,14 +65,12 @@ $result->bind_result($SeriesID, $PubYear, $PubName, $PubAuthor, $PubSecAuthor, $
 		} else if (strpos($PubPublisher, 'UGS') !== false || strpos($PubPublisher, 'UGMS') !== false) {
 			$PubURLString = "<a href='".$PubURL."' target='_blank'><img src='https://geology.utah.gov/docs/images/pdf16x16.gif'></a>";
 			
-			$popupContentDOI = "<br><div id=\\\"downloadLink\\\"><div id=\\\"modalFooter\\\"><a href=\\\"https://doi.org/10.34191/".$SeriesID."\\\" target=\\\"_blank\\\">https://doi.org/10.34191/".$SeriesID."</a></div>";
+			$popupContentDOI .= "<br><div id=\\\"downloadLink\\\"><div id=\\\"modalFooter\\\"><a href=\\\"https://doi.org/10.34191/".$SeriesID."\\\" target=\\\"_blank\\\">https://doi.org/10.34191/".$SeriesID."</a></div>";
 			
 			$popupContent = "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"".$PubURL."\\\" target=\\\"_blank\\\">Publication</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/down-arrow.png\\\" width=\\\"16px\\\"></a></div></div><br><hr>";
 				
 			$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent.$popupContentDOI."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
-		}
-
-		if (array_search($SeriesID, array_column($urls, 'series_id'))){
+		} else if (array_search($SeriesID, array_column($urls, 'series_id'))){
 			//$PubURLString = "<a href='".$PubURL."' target='_blank'><img src='https://geology.utah.gov/docs/images/pdf16x16.gif'></a>";
 						
 			$array = array_keys(array_column($urls, 'series_id'), $SeriesID);
@@ -82,14 +80,14 @@ $result->bind_result($SeriesID, $PubYear, $PubName, $PubAuthor, $PubSecAuthor, $
 				if ((count($urls) >= 1) && (strpos($urls[$value]['url2'], 'http') !== false)){
 					$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"". $urls[$value]['url2'] ."\\\" target=\\\"_blank\\\">".$urls[$value]['extra_data']."</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/down-arrow.png\\\" width=\\\"16px\\\"></a></div></div><br><hr>";
 					$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent.$popupContentDOI."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
-				} else {
+				} /* else {
 					$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://ugspub.nr.utah.gov/publications/". $urls[$value]['url2'] ."\\\" target=\\\"_blank\\\" download>".$urls[$value]['extra_data']."</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/down-arrow.png\\\" width=\\\"16px\\\"></a></div></div><br><hr>";
 					$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent.$popupContentDOI."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
-				} //end if
+				} *///end if
 			}				
-		}/*  else {
+		} else{
 			$PubURLString = "<a href='".$PubURL."' target='_blank'><img src='https://geology.utah.gov/docs/images/pdf16x16.gif'></a>"; 
-		}  */
+		} 
 		
 		/*if ( array_search($SeriesID, array_column($urls, 'series_id'))      ) {
 				$array = array_keys(array_column($urls, 'series_id'), $SeriesID);
