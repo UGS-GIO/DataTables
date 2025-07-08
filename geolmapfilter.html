@@ -401,9 +401,10 @@ tr.filters {
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+				
 			var table = $('#example').DataTable( {
 				ajax: {
-					url: "https://geology.utah.gov/apps/publications/datatablesGitHub/geolmapFilter.php", //needs apps/publications/ added when put into WordPress
+					url: "https://geology.utah.gov/apps/publications/geolmapFilter.php", //needs apps/publications/ added when put into WordPress
 					dataSrc: ""
 				},
 			    columns: [
@@ -426,6 +427,7 @@ tr.filters {
 					{ data: "keywords"} //6 change to 8 - only here for searching, hidden in columnDefs
 				],
 				order: [],
+				
 				columnDefs: [
 					/*{
 						targets: [1, 4, 6],
@@ -503,7 +505,7 @@ tr.filters {
 						autoPrint: false
 					}
 				],*/
-				fixedHeader: true,
+				fixedHeader: false,
 				paging: false,
 				scrollY: 690,
 				scrollCollapse: true,
@@ -616,7 +618,7 @@ tr.filters {
 				if ($(this).hasClass("clicked")) {
 					table.column(8).search('').draw();
 					table.column(5).search('').draw();
-					table.column(5).search('helloRaster').draw();
+					table.column(5).search('Raster Map').draw();
 					$('.button').removeClass("clicked");
 					$(this).toggleClass("clicked");
 				} else {
@@ -628,11 +630,25 @@ tr.filters {
 				if ($(this).hasClass("clicked")) {
 					table.column(8).search('').draw();
 					table.column(5).search('').draw();
-					table.column(5).search('helloVector').draw();
+					table.column(5).search('Vector Map').draw();
 					$('.button').removeClass("clicked");
 					$(this).toggleClass("clicked");
 				} else {
 					table.column(5).search('').draw();
+				}
+			})
+			$('#gems').click(function()  {
+				$(this).toggleClass("clicked");
+				if ($(this).hasClass("clicked")) {
+					$('input[type="text"]').val('');
+					$('input[type="text"]').keyup();
+					table.column(8).search('').draw();
+					table.column(5).search('').draw();
+					table.column(8).search('gems').draw();
+					$('.button').removeClass("clicked");
+					$(this).toggleClass("clicked");
+				} else {
+					table.column(8).search('').draw();
 				}
 			})
 		});
@@ -648,6 +664,7 @@ tr.filters {
 <button id="irreg" class="button">Other Maps</button>
 <button id="gisVector" class="button">Vector GIS Available</button>
 <button id="gisRaster" class="button">Raster GIS Available</button>
+<button id="gems" class="button">GeMS</button>
 <button id="clear" class="button">Clear Filter</button>
 
 	<table id="example" class="display" style="width:100%">
