@@ -34,7 +34,7 @@ if (mysqli_connect_errno())
 
 
 // NOW WE DO OUR MAIN SQL CALL AND GET THE PUB TABLE
-$query = "SELECT series_id, pub_year, pub_name, pub_author, pub_sec_author, pub_url, pub_scale, keywords, bookstore_url FROM UGSpubs WHERE keywords LIKE '%geohaz%' ORDER BY pub_year DESC";
+$query = "SELECT series_id, pub_year, pub_name, pub_author, pub_sec_author, pub_url, pub_publisher, pub_scale, keywords, bookstore_url FROM UGSpubs WHERE keywords LIKE '%geohaz%' ORDER BY pub_year DESC, pub_month DESC";
 //pub_scale = '1:24,000' AND quad_name IS NOT NULL AND pub_url IS NOT NULL ORDER BY quad_name ASC";
 $result = $mysqli->prepare($query);
 
@@ -42,7 +42,7 @@ $result = $mysqli->prepare($query);
 	
 $result->execute();
 /* bind result variables */
-$result->bind_result($SeriesID, $PubYear, $PubName, $PubAuthor, $PubSecAuthor, $PubURL, $PubScale, $Keywords, $BookstoreURL);
+$result->bind_result($SeriesID, $PubYear, $PubName, $PubAuthor, $PubSecAuthor, $PubURL, $PubPublisher, $PubScale, $Keywords, $BookstoreURL);
 
 	// loop through each row in the main pub table
 	while ($result->fetch())
@@ -58,26 +58,38 @@ $result->bind_result($SeriesID, $PubYear, $PubName, $PubAuthor, $PubSecAuthor, $
 		// search the urls[] array (attached data table) for this seriesID, and combine the attached data into the pubs list here.
 		$popupLink = "";		//clear the variable for each iteration
 		$popupContent = "";
+		$popupContentDOI = "";
 		
 		if ( empty($PubURL) ||  is_null($PubURL) || $PubURL === null || $PubURL === 'undefined' || $PubURL === ' ' ) { 
 			$PubURLString = "";
-		} else if (array_search($SeriesID, array_column($urls, 'series_id'))){
+		} else if (strpos($PubPublisher, 'UGS') !== false || strpos($PubPublisher, 'UGMS') !== false) {
 			$PubURLString = "<a href='".$PubURL."' target='_blank'><img src='https://geology.utah.gov/docs/images/pdf16x16.gif'></a>";
+			
+			$popupContentDOI = "<br><div id=\\\"downloadLink\\\"><div id=\\\"modalFooter\\\"><a href=\\\"https://doi.org/10.34191/".$SeriesID."\\\" target=\\\"_blank\\\">https://doi.org/10.34191/".$SeriesID."</a></div>";
+			
+			$popupContent = "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"".$PubURL."\\\" target=\\\"_blank\\\">Publication</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/down-arrow.png\\\" width=\\\"16px\\\"></a></div></div><br><hr>";
+				
+			$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent.$popupContentDOI."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
+		}
+
+		if (array_search($SeriesID, array_column($urls, 'series_id'))){
+			//$PubURLString = "<a href='".$PubURL."' target='_blank'><img src='https://geology.utah.gov/docs/images/pdf16x16.gif'></a>";
+						
 			$array = array_keys(array_column($urls, 'series_id'), $SeriesID);
 			foreach($array as $key => $value) {
 				//echo " ik " . $urls[$value]['extra_data'];
 				//trying to get rid of https prefix when attachedData has a http in it
 				if ((count($urls) >= 1) && (strpos($urls[$value]['url2'], 'http') !== false)){
 					$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"". $urls[$value]['url2'] ."\\\" target=\\\"_blank\\\">".$urls[$value]['extra_data']."</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/down-arrow.png\\\" width=\\\"16px\\\"></a></div></div><br><hr>";
-					$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
-				} else if (count($urls) >= 1){
+					$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent.$popupContentDOI."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
+				} else {
 					$popupContent .= "<div id=\\\"downloadLink\\\"><div id=\\\"leftAlign\\\"><a href=\\\"https://ugspub.nr.utah.gov/publications/". $urls[$value]['url2'] ."\\\" target=\\\"_blank\\\" download>".$urls[$value]['extra_data']."</div><div id=\\\"rightAlign\\\"><img src=\\\"https://geology.utah.gov/docs/images/down-arrow.png\\\" width=\\\"16px\\\"></a></div></div><br><hr>";
-					$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
-				}//end if
+					$popupLink = "<div id='clickMe' onclick='getElementById(\"modalText\").innerHTML =\"".$popupContent.$popupContentDOI."\"'><img src=\"https://geology.utah.gov/docs/images/down-arrow.png\" width=\"16px\"></div>";
+				} //end if
 			}				
-		} else{
+		}/*  else {
 			$PubURLString = "<a href='".$PubURL."' target='_blank'><img src='https://geology.utah.gov/docs/images/pdf16x16.gif'></a>"; 
-		} 
+		}  */
 		
 		/*if ( array_search($SeriesID, array_column($urls, 'series_id'))      ) {
 				$array = array_keys(array_column($urls, 'series_id'), $SeriesID);
